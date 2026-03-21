@@ -96,10 +96,18 @@ static int modRMRequired(OpcodeType type,
 {
 	const struct OpcodeDecision *decision = NULL;
 	const uint8_t *indextable = NULL;
-	unsigned int index;
+	unsigned int index = 0;
+
+	if (insnContext >= IC_max)
+		return false;
+
+#ifdef CAPSTONE_X86_REDUCE
+	/* XOP maps (4, 5, 6): tables not present in reduced builds */
+	if ((int)type == 4 || (int)type == 5 || (int)type == 6)
+		return false;
+#endif
 
 	switch (type) {
-		default: break;
 		case ONEBYTE:
 			decision = ONEBYTE_SYM;
 			indextable = index_x86DisassemblerOneByteOpcodes;
@@ -133,7 +141,12 @@ static int modRMRequired(OpcodeType type,
 			// 3DNow instructions always have ModRM byte
 			return true;
 #endif
+		default:
+			return false;
 	}
+
+	if (!decision || !indextable)
+		return false;
 
 	// return decision->opcodeDecisions[insnContext].modRMDecisions[opcode].modrm_type != MODRM_ONEENTRY;
 	index = indextable[insnContext];
@@ -159,11 +172,19 @@ static InstrUID decode(OpcodeType type,
                        uint8_t modRM)
 {
 	const struct ModRMDecision *dec = NULL;
-	unsigned int index;
+	unsigned int index = 0;
 	static const struct OpcodeDecision emptyDecision = { 0 };
 
+	if (insnContext >= IC_max)
+		return 0;
+
+#ifdef CAPSTONE_X86_REDUCE
+	/* XOP maps (4, 5, 6): tables not present in reduced builds */
+	if ((int)type == 4 || (int)type == 5 || (int)type == 6)
+		return 0;
+#endif
+
 	switch (type) {
-		default: break;	// never reach
 		case ONEBYTE:
 			// dec = &ONEBYTE_SYM.opcodeDecisions[insnContext].modRMDecisions[opcode];
 			index = index_x86DisassemblerOneByteOpcodes[insnContext];
@@ -230,7 +251,12 @@ static InstrUID decode(OpcodeType type,
 				dec = &emptyDecision.modRMDecisions[opcode];
 			break;
 #endif
+		default:
+			return 0;
 	}
+
+	if (!dec)
+		return 0;
 
 	switch (dec->modrm_type) {
 		default:
