@@ -34,7 +34,7 @@ bool XCapstone::isModeValid(XBinary::DM disasmMode)
 {
     bool bResult = false;
 
-    if ((disasmMode == XBinary::DM_X86_16) || (disasmMode == XBinary::DM_X86_32) || (disasmMode == XBinary::DM_X86_64) || (disasmMode == XBinary::DM_ARM_LE) ||
+    if ((disasmMode == XBinary::DM_8086) || (disasmMode == XBinary::DM_X86_32) || (disasmMode == XBinary::DM_X86_64) || (disasmMode == XBinary::DM_ARM_LE) ||
         (disasmMode == XBinary::DM_ARM_BE) || (disasmMode == XBinary::DM_AARCH64_LE) || (disasmMode == XBinary::DM_AARCH64_BE) || (disasmMode == XBinary::DM_CORTEXM) ||
         (disasmMode == XBinary::DM_THUMB_LE) || (disasmMode == XBinary::DM_THUMB_BE) || (disasmMode == XBinary::DM_MIPS_LE) || (disasmMode == XBinary::DM_MIPS_BE) ||
         (disasmMode == XBinary::DM_MIPS64_LE) || (disasmMode == XBinary::DM_MIPS64_BE) || (disasmMode == XBinary::DM_PPC_LE) || (disasmMode == XBinary::DM_PPC_BE) ||
@@ -58,7 +58,7 @@ cs_err XCapstone::openHandle(XBinary::DM disasmMode, csh *pHandle, bool bDetails
     cs_err result = CS_ERR_HANDLE;
 
     // https://github.com/capstone-engine/capstone/blob/9907b22d33693f3beb4b8b7ba261fbdd219afee3/cstool/cstool.c
-    if (disasmMode == XBinary::DM_X86_16) result = cs_open(CS_ARCH_X86, cs_mode(CS_MODE_16), pHandle);
+    if (disasmMode == XBinary::DM_8086) result = cs_open(CS_ARCH_X86, cs_mode(CS_MODE_16), pHandle);
     else if (disasmMode == XBinary::DM_X86_32) result = cs_open(CS_ARCH_X86, cs_mode(CS_MODE_32), pHandle);
     else if (disasmMode == XBinary::DM_X86_64) result = cs_open(CS_ARCH_X86, cs_mode(CS_MODE_64), pHandle);
     else if (disasmMode == XBinary::DM_ARM_LE) result = cs_open(CS_ARCH_ARM, cs_mode(CS_MODE_ARM | CS_MODE_LITTLE_ENDIAN), pHandle);
