@@ -17,7 +17,9 @@
 #ifdef CAPSTONE_HAS_SPARC
 
 #ifdef _MSC_VER
+#ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
+#endif
 #endif
 
 #if defined (WIN32) || defined (WIN64) || defined (_WIN32) || defined (_WIN64)
